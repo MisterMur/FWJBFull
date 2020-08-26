@@ -3,21 +3,22 @@ services:
   api:
     image: mistermur/fwjb-api
     build:
-      context: .
-      dockerfile: fwjbBackend/Dockerfile.dev
+      context: ./fwjbBackend
+      dockerfile: Dockerfile.dev
+
     networks:
       - webappnetwork
     ports:
       - "8080:8080"
     depends_on:
-      - mongodb
+      - mongo
     volumes:
     - ./:/usr/src/app
   fwjb:
     image: mistermur/fwjb-frontend
     build:
-      context: .
-      dockerfile: fwjbFrontend/Dockerfile.dev
+      context: ./fwjbFrontend
+      dockerfile: Dockerfile.dev
     links:
       - api
     ports:
@@ -30,15 +31,19 @@ services:
         - CHOKIDAR_USEPOLLING=true
     networks:
       - webappnetwork
-  mongodb:
+  mongo:
     image: mongo
     restart: always
-    container_name: mongodb
+    container_name: 'fwjbDB'
     volumes:
         - ./data-node:/data/db
     ports:
         - 27017:27017
     command: mongod --noauth --smallfiles
+    environment: 
+      - MONGO_INITDB_DATABASE=fwjb-db
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminadmin
     networks:
         - webappnetwork
 
