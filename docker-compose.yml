@@ -10,10 +10,15 @@ services:
       - webappnetwork
     ports:
       - "8080:8080"
-    depends_on:
-      - mongo
+    # depends_on:
+    #   - mongo
     volumes:
-    - ./:/usr/src/app
+      - /app/node_modules
+      - ./fwjbBackend:/usr/src/app
+    environment: 
+      - MONGODB_URL=mongodb+srv://justin:fwjb@cluster0.ygcot.mongodb.net/fwjb?retryWrites=true&w=majority
+      - MONGODB_URI=mongodb+srv://admin:adminadmin@fwjb.u4e1e.mongodb.net/fwjbDB?retryWrites=true&w=majority
+      - MONGODB_TEST=mongodb+srv://admin:adminadmin@fwjb.u4e1e.mongodb.net/testfwjbDB?retryWrites=true&w=majority
   fwjb:
     image: mistermur/fwjb-frontend
     build:
@@ -25,27 +30,27 @@ services:
         - "3000:3000"
     volumes:
         - /app/node_modules
-        - .:/app
+        - ./fwjbFrontend:/app
     stdin_open: true
     environment:
         - CHOKIDAR_USEPOLLING=true
     networks:
       - webappnetwork
-  mongo:
-    image: mongo
-    restart: always
-    container_name: 'fwjbDB'
-    volumes:
-        - ./data-node:/data/db
-    ports:
-        - 27017:27017
-    command: mongod --noauth --smallfiles
-    environment: 
-      - MONGO_INITDB_DATABASE=fwjb-db
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=adminadmin
-    networks:
-        - webappnetwork
+  # mongo:
+  #   image: mongo
+  #   restart: always
+  #   container_name: 'fwjbDB'
+  #   volumes:
+  #       - ./data-node:/data/db
+  #   ports:
+  #       - 27017:27017
+  #   command: mongod --noauth --smallfiles
+  #   environment: 
+  #     - MONGO_INITDB_DATABASE=fwjb-db
+  #     - MONGO_INITDB_ROOT_USERNAME=admin
+  #     - MONGO_INITDB_ROOT_PASSWORD=adminadmin
+  #   networks:
+  #       - webappnetwork
 
 networks:
   webappnetwork:
